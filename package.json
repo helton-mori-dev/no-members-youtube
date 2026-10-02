@@ -1,0 +1,13 @@
+{
+  "name": "youtube-hide-members",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Extensão Chrome que oculta vídeos \"Só para membros\" no YouTube",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,35 @@
+/*
+ * Camada 1 — caminho rápido, independente de idioma.
+ * No layout antigo do YouTube (Polymer), o selo "Só para membros" carrega a
+ * classe `badge-style-type-members-only`, então dá para esconder o card
+ * inteiro só com CSS, antes mesmo de o JS rodar.
+ */
+ytd-rich-item-renderer:has(.badge-style-type-members-only),
+ytd-video-renderer:has(.badge-style-type-members-only),
+ytd-grid-video-renderer:has(.badge-style-type-members-only),
+ytd-compact-video-renderer:has(.badge-style-type-members-only),
+ytd-playlist-video-renderer:has(.badge-style-type-members-only),
+ytd-playlist-panel-video-renderer:has(.badge-style-type-members-only),
+yt-lockup-view-model:has(.badge-style-type-members-only) {
+  display: none !important;
+}
+
+/*
+ * Camada 2 — elementos marcados pelo content script (dist/content.js).
+ * Cobre o layout novo, em que o selo é apenas texto, e as prateleiras
+ * inteiras de conteúdo para membros na página do canal.
+ */
+[data-oculta-membros] {
+  display: none !important;
+}
+
+/*
+ * Rede de segurança: se o elemento marcado for o miolo de uma célula de grade
+ * (ex.: yt-lockup-view-model dentro de ytd-rich-item-renderer), esconder só o
+ * miolo deixaria a casca ocupando a célula — um buraco na grade. Esconde a
+ * célula inteira.
+ */
+ytd-rich-item-renderer:has([data-oculta-membros]),
+ytm-rich-item-renderer:has([data-oculta-membros]) {
+  display: none !important;
+}

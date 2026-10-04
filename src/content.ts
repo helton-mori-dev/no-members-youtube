@@ -89,6 +89,33 @@ function shouldHide(el: Element): boolean {
   return false;
 }
 
+// Conta só vídeos: prateleiras e chips também carregam HIDDEN_ATTR, mas não são
+// vídeos e não devem entrar no número do badge.
+function hiddenVideoCount(): number {
+  let n = 0;
+  for (const el of document.querySelectorAll(`[${HIDDEN_ATTR}]`)) {
+    if (el.matches(CONTAINER_SELECTOR)) n += 1;
+  }
+  return n;
+}
+
+// Manda a contagem para o service worker, que a põe no badge do ícone. O scan
+// roda a cada frame, então só envia quando o número realmente muda.
+let lastReported = -1;
+function reportCount(): void {
+  const n = hiddenVideoCount();
+  if (n === lastReported) return;
+  lastReported = n;
+  try {
+    chrome.runtime.sendMessage({ ocultos: n }).catch(() => {
+      // Sem receptor no momento: solta a trava para o próximo scan reenviar.
+      lastReported = -1;
+    });
+  } catch {
+    // Extensão recarregada: este content script ficou órfão, nada a fazer.
+  }
+}
+
 function scan(): void {
   // Cards individuais com selo de membros
   for (const badge of document.querySelectorAll(BADGE_SELECTOR)) {
@@ -113,6 +140,8 @@ function scan(): void {
   for (const el of document.querySelectorAll(`[${HIDDEN_ATTR}]`)) {
     if (!shouldHide(el)) el.removeAttribute(HIDDEN_ATTR);
   }
+
+  reportCount();
 }
 
 // Agrupa rajadas de mutações num único scan por frame

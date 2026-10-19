@@ -1,7 +1,9 @@
 // Badge no ícone da extensão: mostra quantos vídeos de membros foram ocultos na
-// aba.
+// aba, ou "OFF" quando a aba está num canal em que o usuário desativou a
+// extensão.
 
 const BADGE_BG = "#006926";
+const BADGE_BG_OFF = "#5f6368";
 
 function badgeText(n: number): string {
   if (n === 0) return "";
@@ -16,14 +18,20 @@ function badgeTitle(n: number): string {
 
 chrome.runtime.onMessage.addListener((message, sender) => {
   const tabId = sender.tab?.id;
-  const ocultos: unknown = (message as { ocultos?: unknown } | null)?.ocultos;
+  const msg = message as { ocultos?: unknown; liberado?: unknown } | null;
+  const ocultos = msg?.ocultos;
   if (tabId === undefined || typeof ocultos !== "number") return;
+  const liberado = msg?.liberado === true;
+
+  const text = liberado ? "OFF" : badgeText(ocultos);
+  const color = liberado ? BADGE_BG_OFF : BADGE_BG;
+  const title = liberado
+    ? "Desativada neste canal: vídeos de membros visíveis"
+    : badgeTitle(ocultos);
 
   // A aba pode ter sido fechada entre o envio e a entrega: ignora a falha.
   const ignore = (): void => {};
-  chrome.action.setBadgeText({ tabId, text: badgeText(ocultos) }).catch(ignore);
-  chrome.action
-    .setBadgeBackgroundColor({ tabId, color: BADGE_BG })
-    .catch(ignore);
-  chrome.action.setTitle({ tabId, title: badgeTitle(ocultos) }).catch(ignore);
+  chrome.action.setBadgeText({ tabId, text }).catch(ignore);
+  chrome.action.setBadgeBackgroundColor({ tabId, color }).catch(ignore);
+  chrome.action.setTitle({ tabId, title }).catch(ignore);
 });

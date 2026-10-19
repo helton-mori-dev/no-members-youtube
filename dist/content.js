@@ -10,6 +10,9 @@ const MEMBERS_TEXTS = [
     "solo para miembros",
 ];
 const HIDDEN_ATTR = "data-oculta-membros";
+// Posto no <html> enquanto a página é de um canal liberado pelo popup. Desliga a
+// camada de CSS puro do hide.css, que não passa pelo content script.
+const LIBERADO_ATTR = "data-membros-liberados";
 const MEMBERS_RX = new RegExp(MEMBERS_TEXTS.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "i");
 // Cards de vídeo nos vários layouts do YouTube (Polymer antigo + view models novos)
 const CONTAINER_SELECTOR = [
@@ -83,24 +86,43 @@ function hiddenVideoCount() {
     return n;
 }
 // Manda a contagem para o service worker, que a põe no badge do ícone. O scan
-// roda a cada frame, então só envia quando o número realmente muda.
-let lastReported = -1;
-function reportCount() {
-    const n = hiddenVideoCount();
-    if (n === lastReported)
+// roda a cada frame, então só envia quando o estado realmente muda.
+let lastReported = "";
+function reportCount(liberado) {
+    const ocultos = hiddenVideoCount();
+    const state = `${ocultos}|${liberado}`;
+    if (state === lastReported)
         return;
-    lastReported = n;
+    lastReported = state;
     try {
-        chrome.runtime.sendMessage({ ocultos: n }).catch(() => {
+        chrome.runtime.sendMessage({ ocultos, liberado }).catch(() => {
             // Sem receptor no momento: solta a trava para o próximo scan reenviar.
-            lastReported = -1;
+            lastReported = "";
         });
     }
     catch {
         // Extensão recarregada: este content script ficou órfão, nada a fazer.
     }
 }
+// Vazio até o storage responder: nesse intervalo tudo é ocultado, e um canal
+// liberado reaparece em seguida (melhor que mostrar e esconder depois).
+let liberados = new Set();
+function canalLiberado() {
+    const key = channelKey(location.href);
+    return key !== null && liberados.has(key);
+}
 function scan() {
+    // Checado a cada scan, e não só no carregamento: a navegação interna do
+    // YouTube troca de canal (ou sai dele) sem recarregar a página.
+    if (canalLiberado()) {
+        document.documentElement.setAttribute(LIBERADO_ATTR, "");
+        for (const el of document.querySelectorAll(`[${HIDDEN_ATTR}]`)) {
+            el.removeAttribute(HIDDEN_ATTR);
+        }
+        reportCount(true);
+        return;
+    }
+    document.documentElement.removeAttribute(LIBERADO_ATTR);
     // Cards individuais com selo de membros
     for (const badge of document.querySelectorAll(BADGE_SELECTOR)) {
         if (!isMembersBadge(badge))
@@ -126,7 +148,7 @@ function scan() {
         if (!shouldHide(el))
             el.removeAttribute(HIDDEN_ATTR);
     }
-    reportCount();
+    reportCount(false);
 }
 // Agrupa rajadas de mutações num único scan por frame
 let scanScheduled = false;
@@ -146,4 +168,20 @@ new MutationObserver(scheduleScan).observe(document.documentElement, {
 });
 // Dispara a cada navegação interna
 window.addEventListener("yt-navigate-finish", scheduleScan);
+function refreshLiberados() {
+    loadLiberados()
+        .then((set) => {
+        liberados = set;
+        scheduleScan();
+    })
+        .catch(() => {
+        // Storage indisponível (ou script órfão): segue com a lista que tinha.
+    });
+}
+refreshLiberados();
+// Mudança feita em outra aba (ou em outro Chrome, via sync) vale sem recarregar
+chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === "sync" && LIBERADOS_KEY in changes)
+        refreshLiberados();
+});
 scheduleScan();

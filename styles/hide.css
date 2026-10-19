@@ -3,14 +3,17 @@
  * No layout antigo do YouTube (Polymer), o selo "Só para membros" carrega a
  * classe `badge-style-type-members-only`, então dá para esconder o card
  * inteiro só com CSS, antes mesmo de o JS rodar.
+ *
+ * O content script põe `data-membros-liberados` no <html> nos canais em que o
+ * usuário desativou a extensão pelo popup; ali esta camada não vale.
  */
-ytd-rich-item-renderer:has(.badge-style-type-members-only),
-ytd-video-renderer:has(.badge-style-type-members-only),
-ytd-grid-video-renderer:has(.badge-style-type-members-only),
-ytd-compact-video-renderer:has(.badge-style-type-members-only),
-ytd-playlist-video-renderer:has(.badge-style-type-members-only),
-ytd-playlist-panel-video-renderer:has(.badge-style-type-members-only),
-yt-lockup-view-model:has(.badge-style-type-members-only) {
+html:not([data-membros-liberados]) ytd-rich-item-renderer:has(.badge-style-type-members-only),
+html:not([data-membros-liberados]) ytd-video-renderer:has(.badge-style-type-members-only),
+html:not([data-membros-liberados]) ytd-grid-video-renderer:has(.badge-style-type-members-only),
+html:not([data-membros-liberados]) ytd-compact-video-renderer:has(.badge-style-type-members-only),
+html:not([data-membros-liberados]) ytd-playlist-video-renderer:has(.badge-style-type-members-only),
+html:not([data-membros-liberados]) ytd-playlist-panel-video-renderer:has(.badge-style-type-members-only),
+html:not([data-membros-liberados]) yt-lockup-view-model:has(.badge-style-type-members-only) {
   display: none !important;
 }
 

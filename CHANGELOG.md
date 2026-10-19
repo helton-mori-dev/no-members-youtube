@@ -4,6 +4,19 @@ Mudanças relevantes desta extensão, versão a versão. O formato segue o
 [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento
 segue o [SemVer](https://semver.org/lang/pt-BR/).
 
+## [Não lançado]
+
+### Adicionado
+
+- Popup no ícone da extensão com um toggle para desativá-la no canal aberto na
+  aba. Nesse canal, os vídeos, prateleiras e o chip de membros voltam a
+  aparecer, e a aba é recarregada ao mudar o toggle. A lista de canais fica no
+  `chrome.storage.sync` e acompanha o usuário entre os Chromes em que ele
+  entrar. O canal é identificado pela URL (`/@handle`, `/channel/<id>`,
+  `/c/<nome>`, `/user/<nome>`).
+- Badge `OFF`, em cinza, quando a aba está num canal com a extensão
+  desativada.
+
 ## [1.1.0] — 2026-10-03
 
 ### Adicionado

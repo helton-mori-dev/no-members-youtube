@@ -20,8 +20,11 @@ const STAGE = path.join(OUT_DIR, "extensao");
 // Tudo que o Chrome realmente carrega, e só isso.
 const FILES = [
   "manifest.json",
+  "popup.html",
+  "dist/canal.js",
   "dist/content.js",
   "dist/background.js",
+  "dist/popup.js",
   "styles/hide.css",
   "icons/icon16.png",
   "icons/icon48.png",

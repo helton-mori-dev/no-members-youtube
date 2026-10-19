@@ -1,15 +1,17 @@
 {
   "manifest_version": 3,
   "name": "Ocultar vídeos de membros — para YouTube™",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Oculta vídeos \"Só para membros\" na home, busca, sugestões e páginas de canal. Não afiliado ao YouTube/Google.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
+  "permissions": ["storage", "activeTab"],
   "action": {
-    "default_title": "Ocultar vídeos de membros"
+    "default_title": "Ocultar vídeos de membros",
+    "default_popup": "popup.html"
   },
   "background": {
     "service_worker": "dist/background.js"
@@ -18,7 +20,7 @@
     {
       "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
       "css": ["styles/hide.css"],
-      "js": ["dist/content.js"],
+      "js": ["dist/canal.js", "dist/content.js"],
       "run_at": "document_start"
     }
   ]

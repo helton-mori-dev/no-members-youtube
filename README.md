@@ -9,6 +9,17 @@ nas páginas de canal (incluindo prateleiras inteiras de conteúdo para membros)
 
 Sem frameworks — só TypeScript e CSS
 
+## Desativar em um canal
+
+Na página de um canal, clique no ícone da extensão e desligue o toggle
+**Ativa neste canal**. A aba recarrega com os vídeos de membros daquele canal
+visíveis, e o badge do ícone passa a mostrar `OFF`. Para voltar a ocultar,
+religue o toggle na página do canal.
+
+A exceção vale só nas páginas do canal: na home, na busca e nas sugestões, os
+vídeos de membros dele continuam ocultos. Como o canal é identificado pela URL,
+abri-lo por `/@handle` e por `/channel/<id>` conta como dois canais diferentes.
+
 ## Build
 
 ```sh

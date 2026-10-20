@@ -9,6 +9,13 @@ nas páginas de canal (incluindo prateleiras inteiras de conteúdo para membros)
 
 Sem frameworks — só TypeScript e CSS
 
+## Instalar
+
+Instale pela Chrome Web Store:
+**[Ocultar vídeos de membros — para YouTube™](https://chromewebstore.google.com/detail/ocultar-v%C3%ADdeos-de-membros/pbghldleajanejdddhkcbmokhigcinmo)**
+
+Funciona no Chrome e nos navegadores baseados nele (Edge, Brave, Opera).
+
 ## Desativar em um canal
 
 Na página de um canal, clique no ícone da extensão e desligue o toggle

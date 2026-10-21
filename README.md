@@ -1,6 +1,6 @@
 # Ocultar vídeos de membros — para YouTube™
 
-Extensão Chrome (Manifest V3) que oculta vídeos **"Só para membros"** no
+Extensão Chrome que oculta vídeos **"Só para membros"** automaticamente no
 YouTube: na home, nos resultados de busca, nas sugestões ao lado do player e
 nas páginas de canal (incluindo prateleiras inteiras de conteúdo para membros).
 
@@ -14,14 +14,14 @@ Sem frameworks — só TypeScript e CSS
 Instale pela Chrome Web Store:
 **[Ocultar vídeos de membros — para YouTube™](https://chromewebstore.google.com/detail/ocultar-v%C3%ADdeos-de-membros/pbghldleajanejdddhkcbmokhigcinmo)**
 
-Funciona no Chrome e nos navegadores baseados nele (Edge, Brave, Opera).
+Funciona no Chrome e nos navegadores baseados em chromium (Edge, Brave, Opera).
 
 ## Desativar em um canal
 
-Na página de um canal, clique no ícone da extensão e desligue o toggle
+Se quiser ver os vídeos de membros de um canal específico, entre na página de um canal, clique no ícone da extensão e desligue o toggle
 **Ativa neste canal**. A aba recarrega com os vídeos de membros daquele canal
 visíveis, e o badge do ícone passa a mostrar `OFF`. Para voltar a ocultar,
-religue o toggle na página do canal.
+ative o toggle na página do canal.
 
 A exceção vale só nas páginas do canal: na home, na busca e nas sugestões, os
 vídeos de membros dele continuam ocultos. Como o canal é identificado pela URL,
@@ -44,7 +44,7 @@ npm run build
 5. Abra o YouTube — os vídeos de membros somem. Após editar o código,
    clique no ícone de recarregar da extensão em `chrome://extensions`.
 
-## Empacotar
+## Gerar os pacotes
 
 ```sh
 npm run package
@@ -53,17 +53,11 @@ npm run package
 Roda o build e gera duas saídas em `build/`:
 
 - **`build/extensao/`** — a pasta sem compactação, com exatamente os arquivos
-  que vão para a loja. Carregue daqui quando quiser testar o mesmo conjunto que
+  que vão para a chrome store. Carregue daqui quando quiser testar o mesmo conjunto que
   será publicado, e não a pasta do projeto inteira.
 - **`build/youtube-hide-members-<versão>.zip`** — o arquivo a enviar no painel
   da Chrome Web Store. O `manifest.json` fica na raiz do zip, como o painel
   exige.
-
-O script falha se algum arquivo da lista não existir ou se o manifest passar a
-referenciar um arquivo que não está sendo empacotado.
-
-Antes de publicar, suba o `version` do `manifest.json`: o Chrome recusa upload
-cuja versão não seja maior que a já publicada.
 
 ## Changelog
 

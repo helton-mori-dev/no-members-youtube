@@ -22,6 +22,7 @@ const CONTAINER_SELECTOR = [
     "ytd-compact-video-renderer",
     "ytd-playlist-video-renderer",
     "ytd-playlist-panel-video-renderer",
+    "ytd-rich-grid-media",
     "yt-lockup-view-model",
     "ytm-rich-item-renderer",
     "ytm-video-with-context-renderer",
@@ -31,11 +32,16 @@ const CONTAINER_SELECTOR = [
 // yt-lockup-view-model dentro de um ytd-rich-item-renderer) deixaria a casca
 // ocupando a célula — um buraco na grade. Marca sempre o embrulho externo.
 const CELL_SELECTOR = ["ytd-rich-item-renderer", "ytm-rich-item-renderer"].join(",");
+// Prateleira de marca da home. Às vezes é a propaganda de assinatura de um
+// canal ("Curta benefícios como vídeos exclusivos para membros..."), só com
+// vídeos de membros; às vezes não, por isso a checagem em isMembersShelf.
+const BRAND_SHELF_SELECTOR = "ytd-brand-video-shelf-renderer";
 // Prateleiras inteiras (ex.: "Vídeos só para membros" na página do canal)
 const SHELF_SELECTOR = [
     "ytd-shelf-renderer",
     "ytd-rich-section-renderer",
     "grid-shelf-view-model",
+    BRAND_SHELF_SELECTOR,
 ].join(",");
 // Chips da barra de filtros (ex.: "Só para membros" na aba Vídeos do canal).
 // É o embrulho externo, e não o botão, para o chip não deixar um vão na barra.
@@ -59,6 +65,18 @@ function isMembersBadge(badge) {
 function shelfTitle(shelf) {
     return (shelf.querySelector("#title, .shelf-title-text, h2")?.textContent ?? "");
 }
+// A prateleira de assinatura tem o título vazio e o texto de membros só no
+// subtítulo, que muda de idioma; o botão "Conheça" apontando para
+// /channel_memberships não muda. Vale também para a ytd-rich-section-renderer
+// que a embrulha, para a seção inteira sumir sem deixar um vão na home.
+function isMembersShelf(shelf) {
+    if (MEMBERS_RX.test(shelfTitle(shelf)))
+        return true;
+    const brand = shelf.matches(BRAND_SHELF_SELECTOR)
+        ? shelf
+        : shelf.querySelector(BRAND_SHELF_SELECTOR);
+    return brand?.querySelector('a[href^="/channel_memberships"]') != null;
+}
 function chipLabel(chip) {
     return (chip.querySelector("[aria-label]")?.getAttribute("aria-label") ??
         chip.textContent ??
@@ -66,7 +84,7 @@ function chipLabel(chip) {
 }
 function shouldHide(el) {
     if (el.matches(SHELF_SELECTOR))
-        return MEMBERS_RX.test(shelfTitle(el));
+        return isMembersShelf(el);
     if (el.matches(CHIP_SELECTOR))
         return MEMBERS_RX.test(chipLabel(el));
     for (const badge of el.querySelectorAll(BADGE_SELECTOR)) {
@@ -134,7 +152,7 @@ function scan() {
     }
     // Prateleiras dedicadas a conteúdo de membros
     for (const shelf of document.querySelectorAll(SHELF_SELECTOR)) {
-        if (MEMBERS_RX.test(shelfTitle(shelf)))
+        if (isMembersShelf(shelf))
             shelf.setAttribute(HIDDEN_ATTR, "");
     }
     // Chip que filtra a lista por conteúdo de membros

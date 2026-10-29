@@ -4,7 +4,17 @@ Mudanças relevantes desta extensão, versão a versão. O formato segue o
 [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento
 segue o [SemVer](https://semver.org/lang/pt-BR/).
 
-## [Não lançado]
+## [1.2.1] — 2026-10-21
+
+### Corrigido
+
+- A seção da home que divulga a assinatura de um canal ("Curta benefícios como
+  vídeos exclusivos para membros e muito mais") escapava da ocultação: ela não
+  tem título e os cards dela são de um tipo que não era reconhecido. Agora a
+  seção inteira some, identificada pelo link de assinatura do canal,
+  independentemente do idioma, e os vídeos dela entram na contagem do badge.
+
+## [1.2.0] — 2026-10-19
 
 ### Adicionado
 
